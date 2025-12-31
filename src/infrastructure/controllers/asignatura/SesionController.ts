@@ -1,11 +1,12 @@
-import { Controller, Post, Body, Get, Param, Delete, InternalServerErrorException } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Delete, Patch, NotFoundException, InternalServerErrorException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiParam } from '@nestjs/swagger';
 
 import { CreateSesionesCase } from '../../../use-cases/asignaturaspace/Sesion/CreateSesionesCase';
 import { GetSesionesUnidadCase } from '../../../use-cases/asignaturaspace/Sesion/GetSesionesUnidadCase';
+import { UpdateSesionCase } from '../../../use-cases/asignaturaspace/Sesion/UpdateSesionCase';
 import { DeleteSesionesCase } from '../../../use-cases/asignaturaspace/Sesion/DeleteSesionesCase';
 
-import type { CreateSesionDto } from '../../../domain/dtos/CreationDtos';
+import type { CreateSesionDto, UpdateSesionDto } from '../../../domain/dtos/CreationDtos';
 
 @ApiTags('Sesion')
 @Controller('sesiones')
@@ -13,6 +14,7 @@ export class SesionController {
     constructor(
         private readonly createSesionesCase: CreateSesionesCase,
         private readonly getSesionesUnidadCase: GetSesionesUnidadCase,
+        private readonly updateSesionCase: UpdateSesionCase,
         private readonly deleteSesionesCase: DeleteSesionesCase,
     ) { }
 
@@ -49,6 +51,35 @@ export class SesionController {
             return await this.getSesionesUnidadCase.execute(+id);
         } catch (error) {
             throw new InternalServerErrorException('Error al obtener las sesiones de la unidad');
+        }
+    }
+
+    @Patch()
+    @ApiOperation({ summary: 'Actualizar Sesión' })
+    @ApiBody({
+        schema: {
+            type: 'object',
+            properties: {
+                id: { type: 'number' },
+                tema: { type: 'string' },
+                objetivos: { type: 'string' },
+                recursos: { type: 'string' },
+                tipo: { type: 'string' },
+                unidadId: { type: 'number' }
+            },
+            required: ['id', 'tema', 'objetivos', 'recursos', 'tipo', 'unidadId']
+        }
+    })
+    @ApiResponse({ status: 200, description: 'El registro ha sido actualizado exitosamente.' })
+    @ApiResponse({ status: 404, description: 'Sesión no encontrada.' })
+    async updateSesion(@Body() dto: UpdateSesionDto) {
+        try {
+            return await this.updateSesionCase.execute(dto);
+        } catch (error) {
+            if (error instanceof Error && error.message === 'Sesión no encontrada') {
+                throw new NotFoundException(error.message);
+            }
+            throw new InternalServerErrorException('Error al actualizar la sesión');
         }
     }
 

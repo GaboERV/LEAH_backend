@@ -9,6 +9,12 @@ export interface CreateUnidadDto {
     asignaturaId: number;
 }
 
+export interface UpdateUnidadDto {
+    id: number;
+    nombre: string;
+    asignaturaId: number;
+}
+
 
 export interface RegistrarClaseDto {
     nombre: string;
@@ -30,6 +36,15 @@ export interface RegistrarParticipacionDto {
 }
 
 export interface CreateSesionDto {
+    tema: string;
+    objetivos: string;
+    recursos: string;
+    tipo: string;
+    unidadId: number;
+}
+
+export interface UpdateSesionDto {
+    id: number;
     tema: string;
     objetivos: string;
     recursos: string;
