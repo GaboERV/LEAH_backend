@@ -21,6 +21,6 @@ export class AddFechaClaseCase {
 
         const nuevaFechaClase = new ClaseCurso(dto.fecha, [], sesion);
 
-        await this.fechaClaseRepository.save(dto.unidadId, nuevaFechaClase);
+        await this.fechaClaseRepository.save(dto.grupoId,dto.unidadId, nuevaFechaClase);
     }
 }

@@ -5,8 +5,8 @@ export class GetParticipacionesUnidadCase {
     constructor(
         private unidadCursoRepository: UnidadCursoRepository
     ) { }
-    async execute(id: number): Promise<IParticipacionDetalle[]> {
-        const unidadCurso = await this.unidadCursoRepository.get(id);
+    async execute(cursoId: number, unidadId: number): Promise<IParticipacionDetalle[]> {
+        const unidadCurso = await this.unidadCursoRepository.get(cursoId, unidadId);
         if (!unidadCurso) throw new Error("UnidadCurso no encontrado");
         return unidadCurso.obtenerListaParticipaciones();
     }

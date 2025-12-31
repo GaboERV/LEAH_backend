@@ -10,6 +10,6 @@ export class CreateGrupoCase {
             dto.nombre,
             [] // New group starts with no students
         );
-        await this.grupoRepository.save(grupo);
+        await this.grupoRepository.save(dto.docenteId, grupo);
     }
 }

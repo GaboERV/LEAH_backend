@@ -8,9 +8,9 @@ export class GetSesionesCursosCase {
         private claseCursoRepository: ClaseCursoRepository
     ) { }
 
-    async execute(cursoId: number, unidadId: number): Promise<SesionConFechaDto[]> {
+    async execute(grupoId: number, unidadId: number): Promise<SesionConFechaDto[]> {
         const sesiones = await this.sesionesRepository.getByUnidadId(unidadId);
-        const clases = (await this.claseCursoRepository.get(cursoId, unidadId))
+        const clases = (await this.claseCursoRepository.get(grupoId, unidadId))
             .filter(clase => clase.session !== undefined );
 
         return sesiones.map(sesion => {

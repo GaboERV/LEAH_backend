@@ -4,8 +4,8 @@ import { ClaseCursoDto } from "../../../domain/dtos/ResponseDtos";
 export class GetFechasUnidadCase {
     constructor(private claseCursoRepository: ClaseCursoRepository) { }
 
-    async execute(cursoId: number, unidadId: number): Promise<ClaseCursoDto[]> {
-        const clases = await this.claseCursoRepository.get(cursoId, unidadId);
+    async execute(grupoId: number, unidadId: number): Promise<ClaseCursoDto[]> {
+        const clases = await this.claseCursoRepository.get(grupoId, unidadId);
 
         return clases.map(c => ({
             id: c.id || 0,

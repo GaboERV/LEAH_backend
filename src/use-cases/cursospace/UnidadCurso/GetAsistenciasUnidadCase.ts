@@ -5,8 +5,8 @@ export class GetAsistenciasUnidadCase {
     constructor(
         private unidadCursoRepository: UnidadCursoRepository
     ) { }
-    async execute(id: number): Promise<IAsistenciaClase[]> {
-        const unidadCurso = await this.unidadCursoRepository.get(id);
+    async execute(cursoId: number, unidadId: number): Promise<IAsistenciaClase[]> {
+        const unidadCurso = await this.unidadCursoRepository.get(cursoId, unidadId);
         if (!unidadCurso) throw new Error("UnidadCurso no encontrado");
         return unidadCurso.obtenerListaAsistencias();
     }

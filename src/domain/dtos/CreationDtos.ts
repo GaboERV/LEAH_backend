@@ -9,6 +9,7 @@ export interface CreateUnidadDto {
     asignaturaId: number;
 }
 
+
 export interface RegistrarClaseDto {
     nombre: string;
     fecha: Date;
@@ -32,12 +33,10 @@ export interface CreateSesionDto {
     tema: string;
     objetivos: string;
     recursos: string;
-    tipo: string; // Using string to avoid importing enum, or should I import? I'll use string or any for now to avoid import issues if enum path is complex, but ideally enum.
-    // Actually, let's try to be precise. `tipoClase` is in `domain/Asignatura/tipoclase.enum`.
-    // I'll use `any` or `string` for DTO simplicity or try to import.
-    // Let's use `string` as DTOs usually use primitives.
+    tipo: string;
     unidadId: number;
 }
+
 
 export interface CreateAsignaturaDto {
     nombre: string;
@@ -64,6 +63,7 @@ export interface UpdatePonderacionDto {
     }[];
 }
 
+
 export interface UpdateActividadesDto {
     ponderacionId: number;
     unidadId: number;
@@ -84,6 +84,7 @@ export interface UpdateSubactividadesDto {
         porcentaje: number;
     }[];
 }
+
 
 export interface CreateGrupoDto {
     nombre: string;
@@ -113,6 +114,7 @@ export interface UpdateEstudianteDto {
 }
 
 export interface AddFechaClaseDto {
+    grupoId: number;
     unidadId: number;
     sesionId?: number;
     fecha: Date;

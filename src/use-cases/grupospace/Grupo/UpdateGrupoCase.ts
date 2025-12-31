@@ -12,6 +12,6 @@ export class UpdateGrupoCase {
         grupo.nombre = dto.nombre;
         // Assuming other fields might be updated in the future or are handled elsewhere
         // For now, only name is updated based on Grupo entity
-        await this.grupoRepository.save(grupo);
+        await this.grupoRepository.save(dto.docenteId, grupo);
     }
 }
