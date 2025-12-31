@@ -1,0 +1,283 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Docente {
+  id        Int       @id @default(autoincrement())
+  email     String    @unique @db.VarChar(191)
+  password  String    @db.VarChar(191)
+  nombre    String    @db.VarChar(191)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  asignaturas Asignatura[]
+  grupos      Grupo[]
+
+  @@map("docente")
+}
+
+model Asignatura {
+  id                            Int       @id @default(autoincrement())
+  nombre                        String    @db.VarChar(191)
+  calificacionMinimaAprobatoria Float
+  porcentajeAsistenciaMinima    Int
+  docenteId                     Int
+  createdAt                     DateTime  @default(now())
+  updatedAt                     DateTime  @updatedAt
+  deletedAt                     DateTime?
+
+  docente  Docente  @relation(fields: [docenteId], references: [id], onDelete: Cascade)
+  unidades Unidad[]
+  cursos   Curso[]
+
+  @@index([docenteId])
+  @@map("asignatura")
+}
+
+model Grupo {
+  id        Int       @id @default(autoincrement())
+  nombre    String    @db.VarChar(191)
+  docenteId Int
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  docente     Docente      @relation(fields: [docenteId], references: [id], onDelete: Cascade)
+  estudiantes Estudiante[]
+  fechasClase FechaClase[]
+  cursos      Curso[]
+
+  @@index([docenteId])
+  @@map("grupo")
+}
+
+model Curso {
+  id             Int       @id @default(autoincrement())
+  grupoId        Int
+  asignaturaId   Int
+  periodoEscolar String?   @db.VarChar(50) // Ej: "2024-1", "Ene-Jun 2024"
+  anio           Int?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  deletedAt      DateTime?
+
+  grupo      Grupo      @relation(fields: [grupoId], references: [id], onDelete: Cascade)
+  asignatura Asignatura @relation(fields: [asignaturaId], references: [id], onDelete: Cascade)
+
+  @@unique([grupoId, asignaturaId, periodoEscolar])
+  @@index([grupoId])
+  @@index([asignaturaId])
+  @@map("curso")
+}
+
+model Unidad {
+  id           Int       @id @default(autoincrement())
+  nombre       String    @db.VarChar(191)
+  publicado    Boolean   @default(false)
+  asignaturaId Int
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
+
+  asignatura      Asignatura      @relation(fields: [asignaturaId], references: [id], onDelete: Cascade)
+  ponderaciones   Ponderacion[]
+  sesiones        Sesion[]
+  participaciones Participacion[]
+  fechasClase     FechaClase[]
+
+  @@index([asignaturaId])
+  @@map("unidad")
+}
+
+model Ponderacion {
+  id         Int       @id @default(autoincrement())
+  nombre     String    @db.VarChar(191)
+  porcentaje Int
+  unidadId   Int
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  deletedAt  DateTime?
+
+  unidad      Unidad      @relation(fields: [unidadId], references: [id], onDelete: Cascade)
+  actividades Actividad[]
+
+  @@index([unidadId])
+  @@map("ponderacion")
+}
+
+model Actividad {
+  id            Int       @id @default(autoincrement())
+  nombre        String    @db.VarChar(191)
+  porcentaje    Int
+  ponderacionId Int
+  sesionId      Int?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+
+  ponderacion    Ponderacion    @relation(fields: [ponderacionId], references: [id], onDelete: Cascade)
+  sesion         Sesion?        @relation(fields: [sesionId], references: [id], onDelete: SetNull)
+  subactividades Subactividad[]
+  calificaciones Calificacion[]
+
+  @@index([ponderacionId])
+  @@index([sesionId])
+  @@map("actividad")
+}
+
+model Subactividad {
+  id          Int       @id @default(autoincrement())
+  nombre      String    @db.VarChar(191)
+  porcentaje  Int
+  actividadId Int
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  actividad      Actividad      @relation(fields: [actividadId], references: [id], onDelete: Cascade)
+  calificaciones Calificacion[]
+
+  @@index([actividadId])
+  @@map("subactividad")
+}
+
+model Estudiante {
+  id        Int       @id @default(autoincrement())
+  nombre    String    @db.VarChar(191)
+  matricula String    @unique @db.VarChar(191)
+  grupoId   Int
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  grupo                    Grupo                     @relation(fields: [grupoId], references: [id], onDelete: Cascade)
+  calificaciones           Calificacion[]
+  asistenciasParticipacion AsistenciaParticipacion[]
+  participaciones          Participacion[]
+
+  @@index([grupoId])
+  @@map("estudiante")
+}
+
+model Calificacion {
+  id             Int       @id @default(autoincrement())
+  estudianteId   Int
+  valor          Float
+  comentarios    String?   @db.VarChar(191)
+  subactividadId Int?
+  actividadId    Int
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  deletedAt      DateTime?
+
+  estudiante   Estudiante    @relation(fields: [estudianteId], references: [id], onDelete: Cascade)
+  subactividad Subactividad? @relation(fields: [subactividadId], references: [id], onDelete: Cascade)
+  actividad    Actividad     @relation(fields: [actividadId], references: [id], onDelete: Cascade)
+
+  @@unique([actividadId, estudianteId, subactividadId])
+  @@index([estudianteId])
+  @@index([subactividadId])
+  @@index([actividadId])
+  @@map("calificacion")
+}
+
+model Sesion {
+  id        Int        @id @default(autoincrement())
+  unidadId  Int
+  tema      String     @db.Text
+  tipo      TipoSesion
+  objetivo  String     @db.Text
+  entregas  String     @db.Text
+  recursos  String     @db.Text
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  deletedAt DateTime?
+
+  unidad      Unidad       @relation(fields: [unidadId], references: [id], onDelete: Cascade)
+  actividades Actividad[]
+  fechasClase FechaClase[]
+
+  @@index([unidadId])
+  @@map("sesion")
+}
+
+model FechaClase {
+  id        Int       @id @default(autoincrement())
+  sesionId  Int?
+  grupoId   Int
+  fecha     DateTime  @db.Date
+  unidadId  Int
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  sesion      Sesion?                   @relation(fields: [sesionId], references: [id])
+  grupo       Grupo                     @relation(fields: [grupoId], references: [id], onDelete: Cascade)
+  unidad      Unidad                    @relation(fields: [unidadId], references: [id], onDelete: Cascade)
+  asistencias AsistenciaParticipacion[]
+
+  @@unique([sesionId, grupoId])
+  @@index([grupoId])
+  @@index([unidadId])
+  @@index([fecha])
+  @@map("fecha_clase")
+}
+
+model AsistenciaParticipacion {
+  id           Int            @id @default(autoincrement())
+  estudianteId Int
+  fechaClaseId Int
+  asistencia   TipoAsistencia @default(Asistio)
+  comentarios  String?        @db.VarChar(191)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  deletedAt    DateTime?
+
+  estudiante Estudiante @relation(fields: [estudianteId], references: [id], onDelete: Cascade)
+  fechaClase FechaClase @relation(fields: [fechaClaseId], references: [id], onDelete: Cascade)
+
+  @@unique([estudianteId, fechaClaseId])
+  @@index([fechaClaseId])
+  @@index([estudianteId])
+  @@map("asistencia_participacion")
+}
+
+model Participacion {
+  id                    Int       @id @default(autoincrement())
+  estudianteId          Int
+  unidadId              Int
+  numeroParticipaciones Int       @default(0)
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  deletedAt             DateTime?
+
+  estudiante Estudiante @relation(fields: [estudianteId], references: [id], onDelete: Cascade)
+  unidad     Unidad     @relation(fields: [unidadId], references: [id], onDelete: Cascade)
+
+  @@unique([estudianteId, unidadId])
+  @@index([unidadId])
+  @@index([estudianteId])
+  @@map("participacion")
+}
+
+// Enums
+enum TipoSesion {
+  clase
+  evaluacion
+  inhabil
+}
+
+enum TipoAsistencia {
+  Asistio
+  Retardo
+  Ausente
+  Justificado
+}
