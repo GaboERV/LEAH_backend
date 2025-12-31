@@ -40,7 +40,7 @@ export class AsignaturaController {
         try {
             return await this.createAsignaturaCase.execute(dto);
         } catch (error) {
-            throw new InternalServerErrorException('Error al crear la asignatura');
+            throw new InternalServerErrorException(error.message);
         }
     }
 
@@ -52,7 +52,7 @@ export class AsignaturaController {
         try {
             return await this.getAsignaturasDocenteCase.execute(+id);
         } catch (error) {
-            throw new InternalServerErrorException('Error al obtener las asignaturas del docente');
+            throw new InternalServerErrorException(error.message);
         }
     }
 
@@ -72,7 +72,7 @@ export class AsignaturaController {
             if (error instanceof NotFoundException) {
                 throw error;
             }
-            throw new InternalServerErrorException('Error al obtener la asignatura');
+            throw new InternalServerErrorException(error.message);
         }
     }
 
@@ -100,7 +100,7 @@ export class AsignaturaController {
             if (error instanceof Error && error.message === 'Asignatura no encontrada') {
                 throw new NotFoundException(error.message);
             }
-            throw new InternalServerErrorException('Error al actualizar la asignatura');
+            throw new InternalServerErrorException(error.message);
         }
     }
 
@@ -112,7 +112,7 @@ export class AsignaturaController {
         try {
             return await this.deleteAsignaturaCase.execute(+id);
         } catch (error) {
-            throw new InternalServerErrorException('Error al eliminar la asignatura');
+            throw new InternalServerErrorException(error.message);
         }
     }
 }

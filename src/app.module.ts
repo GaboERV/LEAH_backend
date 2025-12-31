@@ -15,6 +15,7 @@ import { EstudianteController } from './infrastructure/controllers/grupospace/Es
 import { CursoController } from './infrastructure/controllers/cursospace/CursoController';
 import { UnidadCursoController } from './infrastructure/controllers/cursospace/UnidadCursoController';
 import { ClaseController } from './infrastructure/controllers/cursospace/ClaseController';
+import { DocenteController } from './infrastructure/controllers/docente/DocenteController';
 
 // Repositories
 import { AsignaturaPrismaRepository } from './infrastructure/repositories/Asignatura/AsignaturaPrisma';
@@ -39,6 +40,14 @@ import { UnidadCursoPrismaRepository } from './infrastructure/repositories/Curso
 import { UnidadCursoRepository } from './domain/repositories/Curso/UnidadCurso';
 import { ClaseCursoPrismaRepository } from './infrastructure/repositories/Curso/ClaseCursoPrisma';
 import { ClaseCursoRepository } from './domain/repositories/Curso/ClaseCurso';
+
+// Services
+import { EncryptService } from './domain/services/EncryptService';
+import { BcryptEncryptService } from './infrastructure/services/BcryptEncryptService';
+import { TokenService } from './domain/services/TokenService';
+import { JwtTokenService } from './infrastructure/services/JwtTokenService';
+import { CorreoValidatorService } from './domain/services/CorreoValidatorService';
+import { SimpleCorreoValidatorService } from './infrastructure/services/SimpleCorreoValidatorService';
 
 // Use Cases - Asignatura
 import { CreateAsignaturaCase } from './use-cases/asignaturaspace/Asignatura/CreateAsignaturaCase';
@@ -104,6 +113,11 @@ import { DesasignarFechaSesionCase } from './use-cases/cursospace/ClaseSesisones
 import { GetFechasUnidadCase } from './use-cases/cursospace/ClaseSesisones/GetFechasUnidadCase';
 import { GetSesionesCursosCase } from './use-cases/cursospace/ClaseSesisones/GetSesionesCursos';
 
+// Use Cases - Docente
+import { CreateDocenteCase } from './use-cases/Docente/CreateDocenteCase';
+import { LoginCase } from './use-cases/Docente/LoginCase';
+import { GetDatosDashboard } from './use-cases/Docente/GetDatosDashboard';
+
 
 @Global()
 @Module({
@@ -122,7 +136,8 @@ import { GetSesionesCursosCase } from './use-cases/cursospace/ClaseSesisones/Get
     EstudianteController,
     CursoController,
     UnidadCursoController,
-    ClaseController
+    ClaseController,
+    DocenteController
   ],
   providers: [
     { provide: AsignaturaRepository, useClass: AsignaturaPrismaRepository },
@@ -136,6 +151,10 @@ import { GetSesionesCursosCase } from './use-cases/cursospace/ClaseSesisones/Get
     { provide: CursoRepository, useClass: CursoPrismaRepository },
     { provide: UnidadCursoRepository, useClass: UnidadCursoPrismaRepository },
     { provide: ClaseCursoRepository, useClass: ClaseCursoPrismaRepository },
+
+    { provide: EncryptService, useClass: BcryptEncryptService },
+    { provide: TokenService, useClass: JwtTokenService },
+    { provide: CorreoValidatorService, useClass: SimpleCorreoValidatorService },
 
     CreateAsignaturaCase,
     GetAsignaturasDocenteCase,
@@ -188,7 +207,11 @@ import { GetSesionesCursosCase } from './use-cases/cursospace/ClaseSesisones/Get
     DeleteFechaClaseCase,
     DesasignarFechaSesionCase,
     GetFechasUnidadCase,
-    GetSesionesCursosCase
+    GetSesionesCursosCase,
+
+    CreateDocenteCase,
+    LoginCase,
+    GetDatosDashboard
   ],
 })
 export class AppModule { }

@@ -1,3 +1,3 @@
-export interface CorreoValidatorService {
-   validarCorreo(correo: string): boolean;
+export abstract class CorreoValidatorService {
+   abstract validarCorreo(correo: string): boolean;
 }

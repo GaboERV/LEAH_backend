@@ -35,7 +35,7 @@ export class CursoController {
         try {
             return await this.createCursoCase.execute(dto);
         } catch (error) {
-            throw new InternalServerErrorException('Error al crear el curso');
+            throw new InternalServerErrorException(error.message);
         }
     }
 
@@ -47,7 +47,7 @@ export class CursoController {
         try {
             return await this.getCursosDocenteCase.execute(+id);
         } catch (error) {
-            throw new InternalServerErrorException('Error al obtener los cursos del docente');
+            throw new InternalServerErrorException(error.message);
         }
     }
 
@@ -67,7 +67,7 @@ export class CursoController {
             if (error instanceof NotFoundException) {
                 throw error;
             }
-            throw new InternalServerErrorException('Error al obtener el curso');
+            throw new InternalServerErrorException(error.message);
         }
     }
 
@@ -79,7 +79,7 @@ export class CursoController {
         try {
             return await this.deleteCursoCase.execute(+id);
         } catch (error) {
-            throw new InternalServerErrorException('Error al eliminar el curso');
+            throw new InternalServerErrorException(error.message);
         }
     }
 }

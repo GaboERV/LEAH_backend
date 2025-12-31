@@ -22,7 +22,7 @@ export class PonderacionController {
         try {
             return await this.getPonderacionesUnidadCase.execute(+id);
         } catch (error) {
-            throw new InternalServerErrorException('Error al obtener las ponderaciones de la unidad');
+            throw new InternalServerErrorException(error.message);
         }
     }
 
@@ -57,7 +57,7 @@ export class PonderacionController {
             if (error instanceof Error && error.message === 'Unidad no encontrada') {
                 throw new NotFoundException(error.message);
             }
-            throw new InternalServerErrorException('Error al actualizar las ponderaciones');
+            throw new InternalServerErrorException(error.message);
         }
     }
 }

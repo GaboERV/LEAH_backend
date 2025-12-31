@@ -43,7 +43,7 @@ export class SubactividadController {
             if (error instanceof Error && error.message === 'Actividad no encontrada') {
                 throw new NotFoundException(error.message);
             }
-            throw new InternalServerErrorException('Error al actualizar las subactividades');
+            throw new InternalServerErrorException(error.message);
         }
     }
 }

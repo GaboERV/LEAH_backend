@@ -34,7 +34,7 @@ export class EstudianteController {
         try {
             return await this.createEstudianteCase.execute(dto);
         } catch (error) {
-            throw new InternalServerErrorException('Error al crear el estudiante');
+            throw new InternalServerErrorException(error.message);
         }
     }
 
@@ -47,7 +47,7 @@ export class EstudianteController {
         try {
             return await this.getEstudiantesByGrupoIdCase.execute(+id, +docenteId);
         } catch (error) {
-            throw new InternalServerErrorException('Error al obtener los estudiantes del grupo');
+            throw new InternalServerErrorException(error.message);
         }
     }
 
@@ -73,7 +73,7 @@ export class EstudianteController {
             if (error instanceof Error && error.message === 'Estudiante no encontrado') {
                 throw new NotFoundException(error.message);
             }
-            throw new InternalServerErrorException('Error al actualizar el estudiante');
+            throw new InternalServerErrorException(error.message);
         }
     }
 }

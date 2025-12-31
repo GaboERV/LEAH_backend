@@ -38,7 +38,7 @@ export class SesionController {
         try {
             return await this.createSesionesCase.execute(dto);
         } catch (error) {
-            throw new InternalServerErrorException('Error al crear la sesión');
+            throw new InternalServerErrorException(error.message);
         }
     }
 
@@ -50,7 +50,7 @@ export class SesionController {
         try {
             return await this.getSesionesUnidadCase.execute(+id);
         } catch (error) {
-            throw new InternalServerErrorException('Error al obtener las sesiones de la unidad');
+            throw new InternalServerErrorException(error.message);
         }
     }
 
@@ -79,7 +79,7 @@ export class SesionController {
             if (error instanceof Error && error.message === 'Sesión no encontrada') {
                 throw new NotFoundException(error.message);
             }
-            throw new InternalServerErrorException('Error al actualizar la sesión');
+            throw new InternalServerErrorException(error.message);
         }
     }
 
@@ -91,7 +91,7 @@ export class SesionController {
         try {
             return await this.deleteSesionesCase.execute(+id);
         } catch (error) {
-            throw new InternalServerErrorException('Error al eliminar la sesión');
+            throw new InternalServerErrorException(error.message);
         }
     }
 }

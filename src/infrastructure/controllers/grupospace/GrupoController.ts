@@ -39,7 +39,7 @@ export class GrupoController {
         try {
             return await this.createGrupoCase.execute(dto);
         } catch (error) {
-            throw new InternalServerErrorException('Error al crear el grupo');
+            throw new InternalServerErrorException(error.message);
         }
     }
 
@@ -51,7 +51,7 @@ export class GrupoController {
         try {
             return await this.getGruposCase.execute(+id);
         } catch (error) {
-            throw new InternalServerErrorException('Error al obtener los grupos del docente');
+            throw new InternalServerErrorException(error.message);
         }
     }
 
@@ -72,7 +72,7 @@ export class GrupoController {
             if (error instanceof NotFoundException) {
                 throw error;
             }
-            throw new InternalServerErrorException('Error al obtener el grupo');
+            throw new InternalServerErrorException(error.message);
         }
     }
 
@@ -100,7 +100,7 @@ export class GrupoController {
             if (error instanceof Error && error.message === 'Grupo no encontrado') {
                 throw new NotFoundException(error.message);
             }
-            throw new InternalServerErrorException('Error al actualizar el grupo');
+            throw new InternalServerErrorException(error.message);
         }
     }
 
@@ -112,7 +112,7 @@ export class GrupoController {
         try {
             return await this.deleteGrupoCase.execute(+id);
         } catch (error) {
-            throw new InternalServerErrorException('Error al eliminar el grupo');
+            throw new InternalServerErrorException(error.message);
         }
     }
 }

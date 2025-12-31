@@ -35,8 +35,8 @@ export class EstudiantePrismaRepository implements EstudianteRepository {
                 }
             });
 
-            // Trigger automatic grade creation
-            await this.createCalificacionesForEstudiante(newEstudiante.id, grupoId);
+            // Trigger automatic data initialization
+            await this.initializeEstudianteData(newEstudiante.id, grupoId);
         }
     }
 
@@ -57,20 +57,22 @@ export class EstudiantePrismaRepository implements EstudianteRepository {
         });
     }
 
-    private async createCalificacionesForEstudiante(estudianteId: number, grupoId: number) {
-        // 1. Find all Cursos for the Grupo
-        const cursos = await this.prisma.curso.findMany({
-            where: { grupoId },
-            include: {
-                asignatura: {
-                    include: {
-                        unidades: {
-                            include: {
-                                ponderaciones: {
-                                    include: {
-                                        actividades: {
-                                            include: {
-                                                subactividades: true
+    private async initializeEstudianteData(estudianteId: number, grupoId: number) {
+        // 1. Find all Cursos and FechasClase for the Grupo
+        const [cursos, fechasClase] = await Promise.all([
+            this.prisma.curso.findMany({
+                where: { grupoId },
+                include: {
+                    asignatura: {
+                        include: {
+                            unidades: {
+                                include: {
+                                    ponderaciones: {
+                                        include: {
+                                            actividades: {
+                                                include: {
+                                                    subactividades: true
+                                                }
                                             }
                                         }
                                     }
@@ -79,14 +81,25 @@ export class EstudiantePrismaRepository implements EstudianteRepository {
                         }
                     }
                 }
-            }
-        });
+            }),
+            this.prisma.fechaClase.findMany({
+                where: { grupoId }
+            })
+        ]);
 
         const calificacionesData: any[] = [];
+        const participacionesData: any[] = [];
 
-        // 2. Iterate through structure to find all Actividades and Subactividades
+        // 2. Iterate through structure to find all Actividades, Subactividades and Unidades
         for (const curso of cursos) {
             for (const unidad of curso.asignatura.unidades) {
+                // Prepare Participacion data
+                participacionesData.push({
+                    estudianteId: estudianteId,
+                    unidadId: unidad.id,
+                    numeroParticipaciones: 0
+                });
+
                 for (const ponderacion of unidad.ponderaciones) {
                     for (const actividad of ponderacion.actividades) {
 
@@ -114,11 +127,19 @@ export class EstudiantePrismaRepository implements EstudianteRepository {
             }
         }
 
-        // 3. Bulk create Calificaciones
-        if (calificacionesData.length > 0) {
-            await this.prisma.calificacion.createMany({
-                data: calificacionesData
-            });
-        }
+        // 3. Prepare AsistenciaParticipacion data
+        const asistenciasData = fechasClase.map(fc => ({
+            estudianteId: estudianteId,
+            fechaClaseId: fc.id,
+            asistencia: 'Asistio' as any, // Using string literal as any for enum compatibility
+            comentarios: ""
+        }));
+
+        // 4. Bulk create all records
+        await Promise.all([
+            calificacionesData.length > 0 ? this.prisma.calificacion.createMany({ data: calificacionesData }) : Promise.resolve(),
+            participacionesData.length > 0 ? this.prisma.participacion.createMany({ data: participacionesData }) : Promise.resolve(),
+            asistenciasData.length > 0 ? this.prisma.asistenciaParticipacion.createMany({ data: asistenciasData }) : Promise.resolve(),
+        ]);
     }
 }

@@ -22,7 +22,7 @@ export class ActividadController {
         try {
             return await this.getActividadesPonderacionCase.execute(+id);
         } catch (error) {
-            throw new InternalServerErrorException('Error al obtener las actividades de la ponderación');
+            throw new InternalServerErrorException(error.message);
         }
     }
 
@@ -58,7 +58,7 @@ export class ActividadController {
             if (error instanceof Error && error.message === 'Ponderacion no encontrada') {
                 throw new NotFoundException(error.message);
             }
-            throw new InternalServerErrorException('Error al actualizar las actividades');
+            throw new InternalServerErrorException(error.message);
         }
     }
 }

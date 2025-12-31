@@ -29,7 +29,7 @@ export class UnidadCursoController {
         try {
             return await this.getAlumnosPonderacionActividadesCase.execute(+cursoId, +id);
         } catch (error) {
-            throw new InternalServerErrorException('Error al obtener las calificaciones de la ponderación');
+            throw new InternalServerErrorException(error.message);
         }
     }
 
@@ -42,7 +42,7 @@ export class UnidadCursoController {
         try {
             return await this.getAsistenciasUnidadCase.execute(+cursoId, +id);
         } catch (error) {
-            throw new InternalServerErrorException('Error al obtener las asistencias de la unidad');
+            throw new InternalServerErrorException(error.message);
         }
     }
 
@@ -55,7 +55,7 @@ export class UnidadCursoController {
         try {
             return await this.getParticipacionesUnidadCase.execute(+cursoId, +id);
         } catch (error) {
-            throw new InternalServerErrorException('Error al obtener las participaciones de la unidad');
+            throw new InternalServerErrorException(error.message);
         }
     }
 
@@ -86,7 +86,7 @@ export class UnidadCursoController {
         try {
             return await this.updateAsistenciasUnidadCase.execute(dto.cursoId, dto.unidadId, dto.asistencias);
         } catch (error) {
-            throw new InternalServerErrorException('Error al actualizar las asistencias');
+            throw new InternalServerErrorException(error.message);
         }
     }
 
@@ -106,7 +106,7 @@ export class UnidadCursoController {
         try {
             return await this.updateCalificacionesUnidadCase.execute(dto.cursoId, dto.reporte);
         } catch (error) {
-            throw new InternalServerErrorException('Error al actualizar las calificaciones');
+            throw new InternalServerErrorException(error.message);
         }
     }
 
@@ -136,7 +136,7 @@ export class UnidadCursoController {
         try {
             return await this.updateParticipacionesUnidadCase.execute(dto.cursoId, dto.unidadId, dto.participaciones);
         } catch (error) {
-            throw new InternalServerErrorException('Error al actualizar las participaciones');
+            throw new InternalServerErrorException(error.message);
         }
     }
 }

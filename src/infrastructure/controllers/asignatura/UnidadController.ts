@@ -35,7 +35,7 @@ export class UnidadController {
         try {
             return await this.createUnidadCase.execute(dto);
         } catch (error) {
-            throw new InternalServerErrorException('Error al crear la unidad');
+            throw new InternalServerErrorException(error.message);
         }
     }
 
@@ -47,7 +47,7 @@ export class UnidadController {
         try {
             return await this.getUnidadesCursoCase.execute(+id);
         } catch (error) {
-            throw new InternalServerErrorException('Error al obtener las unidades del curso');
+            throw new InternalServerErrorException(error.message);
         }
     }
 
@@ -73,7 +73,7 @@ export class UnidadController {
             if (error instanceof Error && error.message === 'Unidad no encontrada') {
                 throw new NotFoundException(error.message);
             }
-            throw new InternalServerErrorException('Error al actualizar la unidad');
+            throw new InternalServerErrorException(error.message);
         }
     }
 
@@ -85,7 +85,7 @@ export class UnidadController {
         try {
             return await this.deleteUnidadCase.execute(+id);
         } catch (error) {
-            throw new InternalServerErrorException('Error al eliminar la unidad');
+            throw new InternalServerErrorException(error.message);
         }
     }
 }

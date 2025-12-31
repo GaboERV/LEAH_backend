@@ -41,7 +41,7 @@ export class ClaseController {
         try {
             return await this.addFechaClaseCase.execute(dto);
         } catch (error) {
-            throw new InternalServerErrorException('Error al agregar la fecha de clase');
+            throw new InternalServerErrorException(error.message);
         }
     }
 
@@ -62,7 +62,7 @@ export class ClaseController {
         try {
             return await this.asignarSesionAFechaCase.execute(dto);
         } catch (error) {
-            throw new InternalServerErrorException('Error al asignar la sesión');
+            throw new InternalServerErrorException(error.message);
         }
     }
 
@@ -74,7 +74,7 @@ export class ClaseController {
         try {
             return await this.deleteFechaClaseCase.execute(+id);
         } catch (error) {
-            throw new InternalServerErrorException('Error al eliminar la fecha de clase');
+            throw new InternalServerErrorException(error.message);
         }
     }
 
@@ -94,7 +94,7 @@ export class ClaseController {
         try {
             return await this.desasignarFechaSesionCase.execute(dto.fechaClaseId);
         } catch (error) {
-            throw new InternalServerErrorException('Error al desasignar la sesión');
+            throw new InternalServerErrorException(error.message);
         }
     }
 
@@ -107,7 +107,7 @@ export class ClaseController {
         try {
             return await this.getFechasUnidadCase.execute(+grupoId, +id);
         } catch (error) {
-            throw new InternalServerErrorException('Error al obtener las fechas de clase');
+            throw new InternalServerErrorException(error.message);
         }
     }
 
@@ -120,7 +120,7 @@ export class ClaseController {
         try {
             return await this.getSesionesCursosCase.execute(+grupoId, +id);
         } catch (error) {
-            throw new InternalServerErrorException('Error al obtener las sesiones disponibles');
+            throw new InternalServerErrorException(error.message);
         }
     }
 }
